@@ -76,27 +76,40 @@ class TradeItem(object):
 
                     return ( measure , unit_of_measure )
         
+        
+        @staticmethod
+        def get_trade_item(tok1, tok2 , trade_symbols ):
+                quantity_n_item , value_n_measurement = tok1, tok2
+                
+                quantity , item = TradeItem.parse_measure_and_unit_of_measure( quantity_n_item, trade_symbols )
+                total_value , unit_of_measure = TradeItem.parse_measure_and_unit_of_measure( value_n_measurement, trade_symbols )
+                
+                if quantity != 'error' and total_value != 'error':
+                    return TradeItem(item, unit_of_measure , total_value , quantity )
+                
+                elif quantity == 'error':
+                    print item
+                    return item
+                    
+                else:
+                    print unit_of_measure
+                    return unit_of_measure
+                    
+                return None
+        
         @staticmethod
         def parse_trade_item(tokens , trade_symbols): 
                     toks = tokens.split(' is ')
                     if len(toks) != 2 :
                         return None
                     
-                    quantity_n_item , value_n_measurement = toks[0], toks[1] 
+                    trade_items = []
                     
-                    quantity , item = TradeItem.parse_measure_and_unit_of_measure( quantity_n_item, trade_symbols )
-                    total_value , unit_of_measure = TradeItem.parse_measure_and_unit_of_measure( value_n_measurement, trade_symbols )
+                    trade_items.append( TradeItem.get_trade_item( toks[0] , toks[1] , trade_symbols) )  
+                    trade_items.append( TradeItem.get_trade_item( toks[1] , toks[0] , trade_symbols) )  
+
+                    return trade_items
                     
-                    if quantity != 'error' and total_value != 'error':
-                        return TradeItem(item, unit_of_measure , total_value , quantity )
-                    
-                    elif quantity == 'error':
-                        return item
-                    
-                    else:
-                        return unit_of_measure
-                    
-                    return None
 
 
         

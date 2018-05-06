@@ -55,11 +55,16 @@ class GalaxyTrader(object):
                     self.trade_symbols [ trade_symbol.get_name() ] = trade_symbol
 
                 elif type_of_token == 'TRADE':
-                    trade_item = TradeItem.parse_trade_item( line , self.trade_symbols)
-                    if isinstance(trade_item,str) or trade_item == None:
-                        print "I have no idea what you are talking about"
-                    else: 
-                        self.trade_items[ trade_item.get_name() ] = trade_item
+                    
+                    trade_items = TradeItem.parse_trade_item( line , self.trade_symbols)
+                    error_logged = False
+                    for trade_item in trade_items:
+                        if isinstance(trade_item,str) or trade_item == None:
+                            if not error_logged:
+                                print "Failed to parse trade item -> " , line
+                                error_logged = True
+                        else: 
+                            self.trade_items[ trade_item.get_name() ] = trade_item
 
                 elif type_of_token == 'UNKNOWN':
                         print "I have no idea what you are talking about -> " , line

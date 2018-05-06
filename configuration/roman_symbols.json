@@ -1,0 +1,80 @@
+{
+	"symbols": [
+		{
+			"name": "I",
+			"value": "1",
+			"repeatable": "True",
+			"repeat": "3",
+			"next_allowed_for_subtraction": [
+				"V",
+				"X"
+			]
+		},
+		{
+			"name": "V",
+			"value": "5",
+			"repeatable": "False",
+			"repeat": "1",
+			"next_allowed_for_subtraction": []
+		},
+		{
+			"name": "X",
+			"value": "10",
+			"repeatable": "True",
+			"repeat": "3",
+			"next_allowed_for_subtraction": [
+				"L",
+				"C"
+			]
+		},
+		{
+			"name": "L",
+			"value": "50",
+			"repeatable": "False",
+			"repeat": "1",
+			"next_allowed_for_subtraction": []
+		},
+		{
+			"name": "C",
+			"value": "100",
+			"repeatable": "True",
+			"repeat": "3",
+			"next_allowed_for_subtraction": [
+				"D",
+				"M"
+			]
+		},
+		{
+			"name": "D",
+			"value": "500",
+			"repeatable": "False",
+			"repeat": "1",
+			"next_allowed_for_subtraction": []
+		},
+		{
+			"name": "M",
+			"value": "1000",
+			"repeatable": "True",
+			"repeat": "3",
+			"next_allowed_for_subtraction": []
+		}
+	],
+
+	"decimal_to_roman": 
+	{
+		"1"    : "I",
+		"4"   : "IV",
+		"5"    : "V",
+		"9"    : "IX"		,
+	       "10"    : "X",
+	       "40"    : "XL",
+	       	"50"   : "L",
+		"90"   : "XC",
+		"100"  : "C",
+		"400"  : "CD",
+		"500"  : "D",
+		"900"  : "CM",
+		"1000" : "M"
+
+	}
+}

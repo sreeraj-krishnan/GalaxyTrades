@@ -27,12 +27,15 @@ class Question(object):
             
             unit_of_measurement = None
             Found = False
-            
+
             for tok in lvalue.split():
                 
                 if tok == None:
                     continue
-                
+                elif Found:
+                    self.answer = 'Invalid token "' + tok + '"'
+                    return 
+
                 if tok.lower() in ['how' , 'many' , 'much' ]:
                     if Found:
                         self.answer = " Invalid question or statement"
@@ -40,9 +43,12 @@ class Question(object):
                     else:
                         continue
 
-                else:
+                elif tok in trade_items.keys():
                     unit_of_measurement = tok
-                    found = True
+                    Found = True
+                else:
+                    self.answer = 'Invalid token "' + tok + '"'
+                    return
             
             # no unit of measure found on left side of the question, means right side is a value
 
@@ -80,10 +86,13 @@ class Question(object):
                         return
 
 
-                if decimal > 0 and len(roman_string) > 0:
+                if decimal == 0 and len(roman_string) == 0:
+                    decimal = 1
+
+                elif decimal > 0 and len(roman_string) > 0:
                     self.answer = 'Provide either roman number or hindu-arabic number, but not both'
                     return 
-
+                
                 if len(roman_string) > 0:
                     decimal = RomanSymbol.roman_to_decimal( roman_string )
                     if decimal == 0:
@@ -110,10 +119,46 @@ class Question(object):
                         self.answer = answer + 'is ' + str( int(decimal*val)) + ' ' + unit
                         self.is_valid_question = True
                     else:
-                        if which_item != None:
+                        # how much Silver is Gold ?
+                        # asked question does not have direct relationship
+                        # so find trades which has a common denomitator
+                        # check test.input , if you see Silver is 17 credits , Gold is 14450 
+                        # so Gold = 850 Silver 
+                        from_item = False
+                        to_item   = False
+                        exchange_medium_item1 = {}
+                        exchange_medium_item2 = {}
+                        val1 = None
+                        val2 = None
+                        for key in TradeItem.tradedunits.keys():
+                            
+                            if key.startswith(which_item):
+                                
+                                from_item = True
+                                val1 = TradeItem.tradedunits[key]
+                                exchange_medium_item1[ key.replace(which_item, "") ] = val1
+
+                            elif key.startswith(unit_of_measurement):
+                                to_item = True
+                                val2 = TradeItem.tradedunits[key]
+                                exchange_medium_item2 [ key.replace(unit_of_measurement,"") ] = val2
+
+                        if from_item and to_item:
+                            val = 0
+                            k = None
+                            for k in exchange_medium_item1.keys():
+                                if k in exchange_medium_item2.keys():
+                                    val = float(exchange_medium_item1[k]* decimal) / exchange_medium_item2[k]
+                                    medium = k
+                            if val > 0:
+                                self.answer = answer + 'is ' + str( int(val) ) + ' ' + unit
+                                self.is_valid_question = True
+                             
+                        
+                        elif which_item != None:
                             self.answer  = 'No trades found using ' + which_item
                             if unit_of_measurement != None:
-                                self.answer  = self.answer + ' and ' + unit_of_measurement
+                                self.answer  = self.answer + ' and ' + unit_of_measurement 
 
 
                 

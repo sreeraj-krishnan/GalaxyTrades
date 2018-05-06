@@ -64,10 +64,12 @@ class Parser(object):
             elif token_length == 3:
                 Type = 'ALIAS'
 
-            elif token_length > 3 and 'how' ==  lower_case_tokens[0] and lower_case_tokens[-1] == '?':
-                Type = 'QUESTION'
+            elif token_length > 3 and lower_case_tokens[-1] == '?':
+                if 'how' ==  lower_case_tokens[0]:
+                    Type = 'QUESTION'
+                else:
+                    Type = 'UNKNOWN'
 
-            #elif token_length > 3 and lower_case_tokens[token_length - 3] == 'is':
             elif token_length > 3:
                 Type = 'TRADE'
 

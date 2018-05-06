@@ -22,7 +22,26 @@ class RomanSymbol(object):
 	        
                 self.symbols [ name ] = self
 
-		#RomanSymbols.SymbolsMap[name] = self
+
+        @staticmethod
+        def init_roman_symbols(configuration):
+		
+		try:
+			symbols = configuration.get_json()['symbols']
+			for symbol in symbols:
+				name   = str(symbol['name'])
+				value  = str(symbol['value'])
+				repeatable = str(symbol['repeatable'])
+				repeat = str(symbol['repeat'])
+				next_allowed_for_subtraction = symbol['next_allowed_for_subtraction']
+				transitions = []
+				for transition in next_allowed_for_subtraction:
+					transitions.append(str(transition))
+				roman = RomanSymbol(name,value,repeatable,repeat,transitions)
+				
+		except Exception as e:
+			print e 
+	    
 		
 	def get_name(self):
 		return self.name
@@ -157,10 +176,6 @@ class RomanSymbol(object):
                         # that which is subtracted cannot come again, eg MMMCMC -> invalid , here last C is not valid
                         # however XLIX is valid and is 49 , here X is subtracted from L but X is not used its actually 9 IX
 
-                        #del symbol_reference[ prev ]
-                        #letter_used_for_subtraction[ prev ] = True
-                        #letter_used_for_subtraction[ current_letter ] = True
-
                         if current_obj.get_repeatable():
                             #del symbol_reference[current_letter]
                             
@@ -194,7 +209,6 @@ class RomanSymbol(object):
             while decimal > 0:
                 key = 1
                 for k in RomanSymbol.decimal_to_roman_helper.keys():
-                    #print 'key : ', k , ' decimal : ' , decimal
                     if k <= decimal:
                         key = k
                         continue
@@ -212,28 +226,6 @@ def test_value(val):
     print val , ' : ', out
     return out 
 
-def init_roman_symbols(conf):
-		
-    try:
-	symbols = conf.get_json()['symbols']
-	for symbol in symbols:
-		name   = str(symbol['name'])
-		value  = str(symbol['value'])
-		repeatable = str(symbol['repeatable'])
-		repeat = str(symbol['repeat'])
-		next_allowed_for_subtraction = symbol['next_allowed_for_subtraction']
-		transitions = []
-		for transition in next_allowed_for_subtraction:
-			transitions.append(str(transition))
-	                #print transition	
-		roman = RomanSymbol(name,value,repeatable,repeat,transitions)
-			
-		
-				
-    except Exception as e:
-	print e 
-	    
-
 
 def test_decimal_to_roman():
     for i in range(1,4000):
@@ -245,34 +237,18 @@ def test_roman_to_decimal(roman):
 
 def test_all():
     i = 1
-    ob = open('roman_to_decimal.json', 'w')
-    d = open('decimal_to_roman.json', 'w')
-    ob.write('{\n\t"roman_to_decimal" : {\n')
-    d.write('{\n\t"decimal_to_roman" : {\n')
     for roman in test_decimal_to_roman():
         if i != test_roman_to_decimal ( roman ):
             print 'test failed for ', i
         else:
-            #print 'test passed for ', i , ' : ' , roman
-            s = '\t"' + roman  + '"' + " : " +  str(i) + ','
-            da = '\t"' + str(i)  + '" : "' +  roman + '" , \n'
-            ob.write('\n' + s )
-            d.write( da )
+            print 'test passed for ', i , ' : ' , roman
         i += 1
 
-    ob.write('\n}\n}')
-    d.write('\n}\n}')
-    ob.close()
-    d.close()
 
 if __name__ == '__main__':
     conf = JSONReader('./configuration/roman_symbols.json')
-    init_roman_symbols(conf)
+    RomanSymbol.init_roman_symbols(conf)
     RomanSymbol.init_decimal_to_roman_helper(conf)
 
     test_all()
-    #test_decimal_to_roman()
-    #print RomanSymbol.decimal_to_roman(100)
-    #print RomanSymbol.decimal_to_roman(2)
-    #print RomanSymbol.decimal_to_roman(3)
 
